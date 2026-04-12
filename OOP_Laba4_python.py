@@ -244,6 +244,57 @@ class CTriangle(CShape):
         return "Треугольник"
 
 
+# ─────────────────────────────────────────────────────────────────
+#  Контейнер (расширяет идею ShapeStorage из Л.Р.3)
+# ─────────────────────────────────────────────────────────────────
+
+class ShapeStorage:
+    """
+    Контейнер всех фигур на холсте.
+    Инкапсулирует приватный список, предоставляет API для работы с ним.
+    """
+
+    def __init__(self):
+        self._items: list[CShape] = []
+
+    def add(self, shape: CShape):
+        """Добавить фигуру в контейнер."""
+        self._items.append(shape)
+
+    def remove_selected(self):
+        """Удалить все выделенные фигуры."""
+        self._items = [s for s in self._items if not s.is_selected()]
+
+    def count(self) -> int:
+        return len(self._items)
+
+    def selected_count(self) -> int:
+        return sum(1 for s in self._items if s.is_selected())
+
+    def get(self, index: int) -> CShape:
+        return self._items[index]
+
+    def __iter__(self):
+        return iter(list(self._items))   # копия списка, чтобы избежать сюрпризов
+
+    def deselect_all(self):
+        for s in self._items:
+            s.set_selected(False)
+
+    def select_all(self):
+        for s in self._items:
+            s.set_selected(True)
+
+    def find_at(self, x: int, y: int) -> list[CShape]:
+        """Найти все фигуры, в которые попала точка."""
+        return [s for s in self._items if s.contains_point(x, y)]
+
+    def selected_shapes(self) -> list[CShape]:
+        return [s for s in self._items if s.is_selected()]
+
+
+
+
 
 # ─────────────────────────────────────────────────────────────────
 #  Точка входа
